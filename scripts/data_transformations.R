@@ -12,7 +12,7 @@ library(broom)
 library(lubridate)
 library(RColorBrewer)
 
-# post-election survey .sav files to read in
+# post-election survey datasets
 post_2004 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2004/Post-Election04c.sav", to.data.frame = T)
 post_2006 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2006/p2006postele.por", to.data.frame = T)
 post_2008 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2008/Nov08PostElectc.sav", to.data.frame = T)
