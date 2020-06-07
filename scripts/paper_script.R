@@ -12,13 +12,12 @@ library(broom)
 library(lubridate)
 library(RColorBrewer)
 
-rescdf <- readRDS("~/Research/rescdf")
+rescdf <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/rescdf" %>% url %>%  readRDS
 
 
 #the general specification DID model and output table
 #post-election confidence by law dummy variables with state and year fixed effects
-#first, though, function to quickly cluster standard errors
-#default is state, but this is lightweight enough you could slap any clust_var in
+#first, though, function to quickly cluster standard errors by state (state is the default)
 
 cluster <- function(mod,tag = "group",clust_var = "state"){
   # testing using named inputs
@@ -76,8 +75,8 @@ t_es_ppost <- cluster(es_model_perspost)%>%
     term %>% str_detect("deslaw_")
   ) %>% 
   mutate(
-    conf.low = estimate-2*std.error,
-    conf.high = estimate+2*std.error,
+    conf.low = estimate-1.96*std.error,
+    conf.high = estimate+1.96*std.error,
     term = term %>% str_remove("deslaw_"),
     term = term %>% str_remove("\\:(.*)"),
     terms = term %>% str_split("_"),
@@ -104,8 +103,8 @@ t_es_npost <- cluster(es_model_natpost)%>%
     term %>% str_detect("deslaw_")
   ) %>% 
   mutate(
-    conf.low = estimate-2*std.error,
-    conf.high = estimate+2*std.error,
+    conf.low = estimate-1.96*std.error,
+    conf.high = estimate+1.96*std.error,
     term = term %>% str_remove("deslaw_"),
     term = term %>% str_remove("\\:(.*)"),
     terms = term %>% str_split("_"),
@@ -322,18 +321,18 @@ tot_es %>%
   ylab("Event-Time Dummy Estimate and 95% CI")+
   scale_x_continuous(name = "Elections Since Law Adopted", labels = c(-2:2,"3+"), breaks = c(-2:3))+
   labs(caption = "Stars indicate statistical significance of event study OLS coefficients,\n*p<.05 **p<.01 ***p<.001")+
-  ggsave(filename = "~/Research/Writing/Publication Attempts/SPPQ/es_res_bw_cairo.png",
+  ggsave(filename = "~/Research/Writing/SPPQ/es_res_bw_cairo.png",
          type = "cairo", dpi = 300, width = 7, height = 5, units = "in")
 
 #figure 3
-png(filename = "~/Research/Writing/Publication Attempts/SPPQ/rdes_res_bw_cairo.png",
+png(filename = "~/Research/Writing/SPPQ/rdes_res_bw_cairo.png",
     width = 7, height = 7, res = 300, units = "in")
 intplotbw(modp = rdes_model_ppost, modn = rdes_model_npost,
           type = "race", levels = c("White", "Non-White"))
 dev.off()
 
 #png code to save/export fig 4 as it is currently named
-png(filename = "~/Research/Writing/Publication Attempts/SPPQ/pes_res_bw_cairo.png", type = "cairo",
+png(filename = "~/Research/Writing/SPPQ/pes_res_bw_cairo.png", type = "cairo",
     width = 7, height = 7, res = 300, units = "in")
 intplotbw(modp = pes_model_ppost, modn = pes_model_npost,
           type = "party", levels = c("Democrat","Republican"))

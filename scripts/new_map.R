@@ -14,9 +14,9 @@ library(RColorBrewer)
 library(usmap)
 library(mapproj)
 
-dt1 <- read.csv("~/Research/debate_turn_vid.csv")
+laws <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/vid_laws.csv" %>% read.csv
 
-dt1 <- dt1 %>% 
+laws <- laws %>% 
   select(
     State.Name, State.Abbreviation, `FIPS.Code`, `Type.of.Voter.ID`, `Year.In.Effect`
   ) %>% 
@@ -31,7 +31,9 @@ dt1 <- dt1 %>%
     ) %>% relevel("None")
   )
 
-mapt <- dt1 %>% 
+#usmap is pretty particular about how you create the table that forms the backbone of the map
+#here I am fitting myself to work with it
+mapt <- laws %>% 
   select(
     State.Name, law
   ) %>% 
@@ -47,11 +49,11 @@ mapt <- mapt %>% full_join(mapd)
 mapcols <- brewer.pal(4,"Greys")
 
 
-#Figure 1
+#Figure 1 - usmap gives a lot of warnings, but there's nothing seriously wrong happening
 plot_usmap(data = mapt,regions = "states", values = "law")+
   scale_fill_manual(name = "Type of Voter ID Law", values = mapcols)+
   theme(legend.position =c(.85,.15), legend.background = element_blank(),
         legend.title = element_text(size = 8), 
               legend.text = element_text(size = 6))+
-  ggsave(filename = "~/Research/Writing/Publication Attempts/SPPQ/newmap.png",
+  ggsave(filename = "~/Research/Writing//SPPQ/newmap.png",
          width = 7, height = 5, units = "in", dpi  = 300, type = "cairo")
