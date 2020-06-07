@@ -337,6 +337,8 @@ coded_16 <- post_2016 %>%
     id,age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf
   )
 
+
+#here is our merge of everything, recoded, into a single file
 fullcdf <- coded_04 %>% 
   full_join(coded_06) %>% 
   full_join(coded_08) %>% 
@@ -366,9 +368,9 @@ fullcdf <- coded_04 %>%
     win = ifelse(party==winner,1,0)
   )
 
-laws <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/vid_laws.csv" %>% read.csv()
-
-laws <- laws %>% 
+#here we create a table with state VID laws in effect, which becomes our variables of interest
+laws <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/vid_laws.csv" %>% read.csv%>%
+  select(-X) %>% 
   filter(
     `State.Abbreviation` != "USA"
   ) %>%
@@ -382,24 +384,9 @@ laws <- laws %>%
     law_16 = ifelse(`Year.In.Effect` %>% is.na,"None",ifelse(`Year.In.Effect`<=2016, `Type.of.Voter.ID` %>% as.character(), "None"))
   )
 
-dt2 <- dt1 %>% 
-  mutate(
-    `FIPS.Code`= `FIPS.Code` %>% 
-      plyr::mapvalues(
-        c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", 
-          "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", 
-          "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", 
-          "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", 
-          "46", "47", "48", "49", "50", "51"),
-        c("1", "2", "4", "5", "6", "8", "9", "10", "11", "12", "13", 
-          "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", 
-          "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", 
-          "37", "38", "39", "40", "41", "42", "44", "45", "46", "47", "48", 
-          "49", "50", "51", "53", "54", "55", "56")
-      )
-  ) %>% 
+laws2 <- laws %>% 
   set_names(
-    c("state", "State Abbreviation", "FIPS Code", "Type.of.Voter.ID", 
+    c("fips", "state", "State Abbreviation", "Type.of.Voter.ID", 
       "Year.In.Effect", "2004", "2006", "2008", "2010", "2012", 
       "2014", "2016")
   ) %>% 
@@ -414,11 +401,13 @@ dt2 <- dt1 %>%
   ) %>% 
   mutate(
     year = year %>% as.numeric,
-    state = state %>% as.factor
+    state = state %>% as.character() %>%  factor
   )
 
-dfullcdf <- fullcdf %>% 
-  left_join(dt2) %>%
+#here we join our laws in and create the yfac vector for year fixed effects
+#as well as removing some NAs in year and state
+fullcdf <- fullcdf %>% 
+  left_join(laws2) %>%
   filter(
     year %>% is.na %>% 
       not&
@@ -429,11 +418,11 @@ dfullcdf <- fullcdf %>%
     yfac = year %>% factor
   )
 
-
-descdf <- dfullcdf %>% 
+#here we begin to create the event study variable vector
+descdf <- fullcdf %>% 
   select(year,yfac,age,sex,state,racethn,educ,party,win,winner,law,
          p_post_conf, n_post_conf) %>% 
-  left_join(dt1 %>% select(`State.Name`, `Year.In.Effect`, `Type.of.Voter.ID`)%>%
+  left_join(laws %>% select(`State.Name`, `Year.In.Effect`, `Type.of.Voter.ID`)%>%
               set_names(c("state", "yie", "eventlaw"))
   ) %>% 
   mutate(
@@ -480,6 +469,7 @@ descdf <- descdf %>%
       as.factor() %>% reorder(e_since) %>% relevel("none")
   )
 
+#rescdf is the final dataset, with race recoded to be binary
 rescdf <- descdf %>%
   mutate(
     race = ifelse(racethn=="White non-Hispanic","White","Non-White") %>% factor %>% relevel("White")
@@ -489,4 +479,7 @@ rescdf <- descdf %>%
 #so let's remove all the old ones
 rm(list = c("dfullcdf","dstatecheck","dt1","dt2","fullcdf","postcdf","precdf"))
 
+
+#this RDS file is up on the repository under data/rescdf.RDS
 saveRDS(rescdf,"~/Research/rescdf")
+#don't mind the directory it's going to, but now the research dataset is completely created
