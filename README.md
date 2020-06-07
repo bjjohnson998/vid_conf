@@ -1,4 +1,4 @@
-#Replication Repository for "Voter ID Laws and Confidence in Elections" by Brady Johnson
+# Replication Repository for "Voter ID Laws and Confidence in Elections" by Brady Johnson
 
 This respository has two directories, 'data' and 'scripts.'
 
