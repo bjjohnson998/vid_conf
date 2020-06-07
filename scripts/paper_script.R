@@ -308,6 +308,9 @@ intplotbw <- function(modp, modn, type = c("racethn","party", "race"), levels){
 }
 
 
+## Figures below - it goes without saying that these commands call devices which capture the graphics
+# the file paths are specific to my machine (they go into the director with the .tex file)
+
 #figure 2
 tot_es %>% 
   ggplot(aes(x = time, group = law))+

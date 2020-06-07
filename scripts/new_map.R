@@ -50,6 +50,8 @@ mapcols <- brewer.pal(4,"Greys")
 
 
 #Figure 1 - usmap gives a lot of warnings, but there's nothing seriously wrong happening
+#the file path specified here is the directory on my machine where the .tex file is
+#so pay attention to the ggsave() if you're running this yourself
 plot_usmap(data = mapt,regions = "states", values = "law")+
   scale_fill_manual(name = "Type of Voter ID Law", values = mapcols)+
   theme(legend.position =c(.85,.15), legend.background = element_blank(),

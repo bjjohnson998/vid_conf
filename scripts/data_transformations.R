@@ -338,7 +338,7 @@ coded_16 <- post_2016 %>%
   )
 
 
-#here is our merge of everything, recoded, into a single file
+#here is our merge of everything, recoded, into a single data.frame
 fullcdf <- coded_04 %>% 
   full_join(coded_06) %>% 
   full_join(coded_08) %>% 
@@ -419,6 +419,7 @@ fullcdf <- fullcdf %>%
   )
 
 #here we begin to create the event study variable vector
+#begin by counting elections from the year the law took effect
 descdf <- fullcdf %>% 
   select(year,yfac,age,sex,state,racethn,educ,party,win,winner,law,
          p_post_conf, n_post_conf) %>% 
@@ -432,6 +433,7 @@ descdf <- fullcdf %>%
     e_since = floor(e_since)
   )
 
+# this data.frame here allows me to check for state/year combinations which are pre-treatment periods
 dstatecheck <- descdf %>% 
   filter(
     yie %>% is.na %>% not
@@ -445,6 +447,7 @@ dstatecheck <- descdf %>%
     most_before >1
   )
 
+#joining dstatecheck to create the final version of the event study variable, with the timer
 descdf <- descdf %>% 
   full_join(dstatecheck) %>% 
   mutate(
@@ -475,11 +478,9 @@ rescdf <- descdf %>%
     race = ifelse(racethn=="White non-Hispanic","White","Non-White") %>% factor %>% relevel("White")
   )
 
-#at this point, rescdf is the only relevant data.frame for all further analyses
-#so let's remove all the old ones
-rm(list = c("dfullcdf","dstatecheck","dt1","dt2","fullcdf","postcdf","precdf"))
 
 
 #this RDS file is up on the repository under data/rescdf.RDS
 saveRDS(rescdf,"~/Research/rescdf")
 #don't mind the directory it's going to, but now the research dataset is completely created
+#all analyses contained in paper_script.R use this data.frame
