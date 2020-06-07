@@ -366,12 +366,9 @@ fullcdf <- coded_04 %>%
     win = ifelse(party==winner,1,0)
   )
 
-dt1 <- read.csv("~/Research/debate_turn_vid.csv")
+laws <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/vid_laws.csv" %>% read.csv()
 
-dt1 <- dt1 %>% 
-  select(
-    State.Name, State.Abbreviation, `FIPS.Code`, `Type.of.Voter.ID`, `Year.In.Effect`
-  ) %>% 
+laws <- laws %>% 
   filter(
     `State.Abbreviation` != "USA"
   ) %>%
