@@ -334,7 +334,7 @@ intplotbw(modp = rdes_model_ppost, modn = rdes_model_npost,
           type = "race", levels = c("White", "Non-White"))
 dev.off()
 
-#png code to save/export fig 4 as it is currently named
+#figure 4
 png(filename = "~/Research/Writing/SPPQ/pes_res_bw_cairo.png", type = "cairo",
     width = 7, height = 7, res = 300, units = "in")
 intplotbw(modp = pes_model_ppost, modn = pes_model_npost,
