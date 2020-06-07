@@ -13,19 +13,19 @@ library(lubridate)
 library(RColorBrewer)
 
 # post-election survey datasets
-post_2004 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_04.sav" %>% 
+post_2004 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_04.sav" %>% 
   read.spss(to.data.frame = T)
-post_2006 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_06.por" %>% 
+post_2006 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_06.por" %>% 
   read.spss(to.data.frame = T)
-post_2008 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_08.sav" %>% 
+post_2008 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_08.sav" %>% 
   read.spss(to.data.frame = T)
-post_2010 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_10.sav" %>% 
+post_2010 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_10.sav" %>% 
   read.spss(to.data.frame = T)
-post_2012 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_12.sav" %>% 
+post_2012 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_12.sav" %>% 
   read.spss(to.data.frame = T)
-post_2014 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_14.sav" %>% 
+post_2014 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_14.sav" %>% 
   read.spss(to.data.frame = T)
-post_2016 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_16.sav" %>% 
+post_2016 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_16.sav" %>% 
   read.spss(to.data.frame = T)
 
 #from each post-election dataset I need: date, respondent, age,
