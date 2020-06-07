@@ -13,24 +13,31 @@ library(lubridate)
 library(RColorBrewer)
 
 # post-election survey datasets
-post_2004 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2004/Post-Election04c.sav", to.data.frame = T)
-post_2006 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2006/p2006postele.por", to.data.frame = T)
-post_2008 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2008/Nov08PostElectc.sav", to.data.frame = T)
-post_2010 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2010/Nov10 post-election public.sav", to.data.frame = T)
-post_2012 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2012/Nov12 Post-Elect public.sav", to.data.frame = T)
-post_2014 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2014/Nov14 public.sav", to.data.frame = T)
-post_2016 <- read.spss("~/Research/Pew Data/PEW YOUR VOTE + WAS/2016/Nov16 Post-Election public.sav", to.data.frame = T)
+post_2004 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_04.sav" %>% 
+  read.spss(to.data.frame = T)
+post_2006 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_06.por" %>% 
+  read.spss(to.data.frame = T)
+post_2008 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_08.sav" %>% 
+  read.spss(to.data.frame = T)
+post_2010 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_10.sav" %>% 
+  read.spss(to.data.frame = T)
+post_2012 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_12.sav" %>% 
+  read.spss(to.data.frame = T)
+post_2014 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_14.sav" %>% 
+  read.spss(to.data.frame = T)
+post_2016 <- "https://github.com/bjjohnson998/vid_conf/raw/master/data/raw_data/post_elec_16.sav" %>% 
+  read.spss(to.data.frame = T)
 
 #from each post-election dataset I need: date, respondent, age,
 #race, education, party, state, vote confidence (national and personal) - recodes
 
-d8 <- post_2004 %>% 
+coded_04 <- post_2004 %>% 
   select(
-    respid, sage, state, racethn, ssex, int_date, party, partyln, seduc, q58f1, q59f2, weight
+    respid, sage, state, racethn, ssex, int_date, party, partyln, seduc, q58f1, q59f2
   ) %>% 
   mutate(
     id = str_c("2004post",respid),
-    party = ifelse(party=="Independent",partyln %>% as.character,party %>% as.character),
+    party = ifelse(party%in% c("Democrat", "Republican") %>% not,partyln %>% as.character,party %>% as.character),
     date = int_date %>% mdy,
     p_post_conf = q58f1 %>%
       plyr::mapvalues(
@@ -44,7 +51,6 @@ d8 <- post_2004 %>%
           "Not at all confident", "(VOL. DO NOT READ) Don't know/Refused"),
         c(1,2/3,1/3,0,NA)
       ) %>% as.character %>% as.numeric,
-    regi = T,
     age = sage %>% as.character %>% as.numeric,
     sex = ssex,
     educ = seduc %>% 
@@ -65,19 +71,19 @@ d8 <- post_2004 %>%
       )
   ) %>% 
   select(
-    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf, regi, weight
+    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf
   )
 
-d9 <- post_2006 %>%
+coded_06 <- post_2006 %>%
   set_names(
     post_2006 %>% names %>% str_to_lower
   ) %>% 
   select(
-    psraid, age, state, racethn, sex, int_date, party, partyln, educ, q17, q18, weight
+    psraid, age, state, racethn, sex, int_date, party, partyln, educ, q17, q18
   ) %>% 
   mutate(
     id = str_c("2006post",psraid),
-    party = ifelse(party=="Independent",partyln %>% as.character,party %>% as.character),
+    party = ifelse(party%in% c("Democrat", "Republican") %>% not,partyln %>% as.character,party %>% as.character),
     date = int_date %>% mdy,
     p_post_conf = q17 %>%
       plyr::mapvalues(
@@ -91,7 +97,6 @@ d9 <- post_2006 %>%
           "Not at all confident", "(VOL. DO NOT READ) Don't know/Refused"),
         c(1,2/3,1/3,0,NA)
       ) %>% as.character %>% as.numeric,
-    regi = T,
     age = age %>% as.character %>% as.numeric,
     educ = educ %>% 
       plyr::mapvalues(
@@ -110,16 +115,16 @@ d9 <- post_2006 %>%
       )
   ) %>% 
   select(
-    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf, regi, weight
+    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf
   )
 
-d10 <- post_2008 %>% 
+coded_08 <- post_2008 %>% 
   select(
-    psraid, age, state, racethn, sex, int_date, party, partyln, educ, q60f1, q61f2, weight
+    psraid, age, state, racethn, sex, int_date, party, partyln, educ, q60f1, q61f2
   ) %>% 
   mutate(
     id = str_c("2008post",psraid),
-    party = ifelse(party=="Independent",partyln %>% as.character,party %>% as.character),
+    party = ifelse(party%in% c("Democrat", "Republican") %>% not,partyln %>% as.character,party %>% as.character),
     date = int_date %>% mdy,
     p_post_conf = q60f1 %>%
       plyr::mapvalues(
@@ -133,7 +138,6 @@ d10 <- post_2008 %>%
           "Not at all confident", "Don't know/Refused (VOL)"),
         c(1,2/3,1/3,0,NA)
       ) %>% as.character %>% as.numeric,
-    regi = T,
     age = age %>% as.character %>% as.numeric,
     educ = educ %>% 
       plyr::mapvalues(
@@ -153,16 +157,16 @@ d10 <- post_2008 %>%
       )
   ) %>% 
   select(
-    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf, regi, weight
+    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf
   )
 
-d11 <- post_2010 %>% 
+coded_10 <- post_2010 %>% 
   select(
-    psraid, age, state, racethn, sex, int_date, party, partyln, educ, q18, q19, weight
+    psraid, age, state, racethn, sex, int_date, party, partyln, educ, q18, q19
   ) %>% 
   mutate(
     id = str_c("2010post",psraid),
-    party = ifelse(party=="Independent",partyln %>% as.character,party %>% as.character),
+    party = ifelse(party%in% c("Democrat", "Republican") %>% not,partyln %>% as.character,party %>% as.character),
     date = int_date %>% mdy,
     p_post_conf = q18 %>%
       plyr::mapvalues(
@@ -176,7 +180,6 @@ d11 <- post_2010 %>%
           "Not at all confident", "[VOL. DO NOT READ] Don(t know/Refused"),
         c(1,2/3,1/3,0,NA)
       ) %>% as.character %>% as.numeric,
-    regi = T,
     age = age %>% as.character %>% as.numeric,
     educ = educ %>% 
       plyr::mapvalues(
@@ -196,17 +199,17 @@ d11 <- post_2010 %>%
       )
   ) %>% 
   select(
-    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf, regi, weight
+    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf
   )
 
-d12 <- post_2012 %>% 
+coded_12 <- post_2012 %>% 
   select(
-    psraid, ewage, state, ewracethn, ewsex, int_date, ewparty, ewpartyln, eweduc2, q76, q77, weight
+    psraid, ewage, state, ewracethn, ewsex, int_date, ewparty, ewpartyln, eweduc2, q76, q77
   ) %>% 
   mutate(
     id = str_c("2012post",psraid,sep = ""),
     sex = ewsex,
-    party = ifelse(ewparty=="Independent",ewpartyln %>% as.character,ewparty %>% as.character),
+    party = ifelse(ewparty%in% c("Democrat", "Republican") %>% not,ewpartyln %>% as.character,ewparty %>% as.character),
     date = int_date %>% mdy,
     p_post_conf = q76 %>%
       plyr::mapvalues(
@@ -220,7 +223,6 @@ d12 <- post_2012 %>%
           "Not at all confident", "[VOL. DO NOT READ] Don't know/Refused"),
         c(1,2/3,1/3,0,NA)
       ) %>% as.character %>% as.numeric,
-    regi = T,
     age = ewage %>% as.character %>% as.numeric,
     educ = eweduc2 %>% 
       plyr::mapvalues(
@@ -242,17 +244,17 @@ d12 <- post_2012 %>%
       )
   ) %>% 
   select(
-    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf, regi, weight
+    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf
   )
 
-d13 <- post_2014 %>% 
+coded_14 <- post_2014 %>% 
   select(
-    psraid, age, state, racethn, sex, int_date, party, partyln, educ2, q36, q37, weight
+    psraid, age, state, racethn, sex, int_date, party, partyln, educ2, q36, q37
   ) %>% 
   mutate(
     id = str_c("2014post",psraid,sep = ""),
     sex = sex,
-    party = ifelse(party=="Independent",partyln %>% as.character,party %>% as.character),
+    party = ifelse(party%in% c("Democrat", "Republican") %>% not,partyln %>% as.character,party %>% as.character),
     date = int_date %>% mdy,
     p_post_conf = q36 %>%
       plyr::mapvalues(
@@ -266,7 +268,6 @@ d13 <- post_2014 %>%
           "Not at all confident", "Don't know/Refused (VOL.)"),
         c(1,2/3,1/3,0,NA)
       ) %>% as.character %>% as.numeric,
-    regi = T,
     age = age %>% as.character %>% as.numeric,
     educ = educ2 %>% 
       plyr::mapvalues(
@@ -288,17 +289,17 @@ d13 <- post_2014 %>%
       )
   ) %>% 
   select(
-    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf, regi, weight
+    id, age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf
   )
 
-d14 <- post_2016 %>% 
+coded_16 <- post_2016 %>% 
   select(
-    psraid, origage, state, origracethn, origsex, int_date, party, partyln, origeduc2, q65, q66, weight
+    psraid, origage, state, origracethn, origsex, int_date, party, partyln, origeduc2, q65, q66
   ) %>% 
   mutate(
     id = str_c("2016post",psraid,sep = ""),
     sex = origsex,
-    party = ifelse(party=="Independent",partyln %>% as.character,party %>% as.character),
+    party = ifelse(party%in% c("Democrat", "Republican") %>% not,partyln %>% as.character,party %>% as.character),
     date = int_date %>% mdy,
     p_post_conf = q65 %>%
       plyr::mapvalues(
@@ -312,7 +313,6 @@ d14 <- post_2016 %>%
           "Not at all confident", "[VOL. DO NOT READ] Don't know/Refused"),
         c(1,2/3,1/3,0,NA)
       ) %>% as.character %>% as.numeric,
-    regi = T,
     age = origage %>% as.character %>% as.numeric,
     educ = origeduc2 %>% 
       plyr::mapvalues(
@@ -334,33 +334,22 @@ d14 <- post_2016 %>%
       )
   ) %>% 
   select(
-    id,age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf, regi, weight
+    id,age, state, racethn, sex, date, party, educ, p_post_conf, n_post_conf
   )
 
-fullcdf <- d8 %>% 
-  full_join(d9) %>% 
-  full_join(d10) %>% 
-  full_join(d11) %>% 
-  full_join(d12) %>% 
-  full_join(d13) %>% 
-  full_join(d14) %>% 
+fullcdf <- coded_04 %>% 
+  full_join(coded_06) %>% 
+  full_join(coded_08) %>% 
+  full_join(coded_10) %>% 
+  full_join(coded_12) %>% 
+  full_join(coded_14) %>% 
+  full_join(coded_16) %>% 
   mutate(
     state = state %>% as.factor,
     p_post_conf = p_post_conf %>% as.character %>% as.numeric,
     n_post_conf = n_post_conf %>% as.character %>% as.numeric,
     party = ifelse(party %>% str_detect(pattern = "Republican|Democrat"),party %>% as.character,NA )
-  ) %>% 
-  select(-weight)
-
-rm(list = c("post_2004","post_2008","post_2016","pre_2004",
-            "pre_2008","pre_2016","post_2006","post_2010",
-            "post_2012","pree_2006","pret_2006","post_2014",
-            "d1","d2","d3","d4","d5","d6","d7","d8","d9","d10",
-            "d11","d12","d13","d14"))
-
-
-
-fullcdf <- fullcdf %>%
+  )%>%
   mutate(
     year = date %>% year()
   ) %>% 
